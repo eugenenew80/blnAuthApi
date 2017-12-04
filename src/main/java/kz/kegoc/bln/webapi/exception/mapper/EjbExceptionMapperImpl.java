@@ -33,7 +33,7 @@ public class EjbExceptionMapperImpl implements ExceptionMapper<EJBException> {
 	    	        .entity(new ErrorMessage(appExc.getCode(), appExc.getMessage()))
 	    	        .build();    			
     		}
-    		
+
         	return Response.status(500)
         		.type(MediaType.APPLICATION_JSON)	
     	        .entity(new ErrorMessage("ejb_exception", exc.getCause().getMessage()))

@@ -12,6 +12,12 @@ public class ActiveDirectory {
         String ldapURL = "ldap://" + domainName + '/';
         String principalName = username + "@" + domainName;
 
+        if (password!=null) {
+            password = password.trim();
+            if (password.length()==0)
+                password = null;
+        }
+
         Hashtable<String, String> props = new Hashtable<>();
         props.put(Context.SECURITY_PRINCIPAL, principalName);
         if (password!=null)
