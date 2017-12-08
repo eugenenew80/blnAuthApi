@@ -5,7 +5,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import kz.kegoc.bln.webapi.auth.AuthResourceImpl;
 import kz.kegoc.bln.webapi.exception.mapper.*;
-import kz.kegoc.bln.webapi.filters.BasicAuthentificationFilter;
 
 
 @ApplicationPath("/webapi")
@@ -16,8 +15,7 @@ public class JaxRsConfig extends Application {
 		final Set<Class<?>> resources = new HashSet<Class<?>>();
 
 		resources.add(AuthResourceImpl.class);
-		resources.add(BasicAuthentificationFilter.class);
-		
+
 		resources.add(RepositryNotFoundExceptionMapperImpl.class);
 		resources.add(EntityNotFoundExceptionMapperImpl.class);
 		resources.add(DuplicateEntityExceptionMapperImpl.class);
