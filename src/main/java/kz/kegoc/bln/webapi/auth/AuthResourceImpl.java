@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import kz.kegoc.bln.entity.auth.dto.AuthDataDto;
 import kz.kegoc.bln.service.auth.AuthService;
+import org.apache.commons.lang3.StringUtils;
 
 
 @RequestScoped
@@ -20,16 +21,36 @@ public class AuthResourceImpl {
 	
 	@POST
 	public Response auth(AuthDataDto authData) {
+		boolean auth = false;
+
+		if (StringUtils.isEmpty(authData.getUserName()))
+			return buildResponse(false, "Введите имя пользователя");
+
+		if (StringUtils.isEmpty(authData.getPassword()))
+			return buildResponse(false, "Введите пароль");
+
+		if (!authData.getPassword().equals("123456"))
+			return buildResponse(false, "Имя пользователя или пароль указаны неверно");
+
 		Long userId = authService.auth(authData.getUserName(), authData.getPassword());
-		
-		Response resp = null;
-		if (userId>0)
-			resp = Response.ok("{ \"success\": true" + "}").build();
-		else
-			resp = Response.ok("{ \"success\": false, \"message\": {\"errMsg\": \"Invalid user name or password\"}" + "}").build();
-			
-		return resp;		
+		if (userId<=0)
+			return buildResponse(false, "Пользователь не зарегистрирован");
+
+		return buildResponse(true, "success");
 	}
-	
-	@Inject private AuthService authService;
+
+	private Response buildResponse(boolean auth, String msg) {
+		Response resp = null;
+		if (auth)
+			resp = Response.ok("{ \"success\": true" + "}").build();
+		else {
+			String template = "{ \"success\": false, \"message\": {\"errMsg\": \"@msg\"}" + "}";
+			template = template.replace("@msg", msg);
+			resp = Response.ok(template).build();
+		}
+		return resp;
+	}
+
+	@Inject
+	private AuthService authService;
 }
