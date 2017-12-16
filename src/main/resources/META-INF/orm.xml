@@ -12,6 +12,10 @@
 				<column name="code" />
 			</basic>
 
+			<basic name="password">
+				<column name="password" />
+			</basic>
+
 			<basic name="description">
 				<column name="name" />
 			</basic>

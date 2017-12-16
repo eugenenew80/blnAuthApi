@@ -8,7 +8,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Response;
 
+import kz.kegoc.bln.entity.adm.User;
 import kz.kegoc.bln.entity.auth.dto.AuthDataDto;
+import kz.kegoc.bln.service.adm.UserService;
 import kz.kegoc.bln.service.auth.AuthService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,12 +31,20 @@ public class AuthResourceImpl {
 		if (StringUtils.isEmpty(authData.getPassword()))
 			return buildResponse(false, "Введите пароль");
 
-		if (!authData.getPassword().equals("123456"))
-			return buildResponse(false, "Имя пользователя или пароль указаны неверно");
+		Long userId = 0l;
+		try {
+			userId = authService.auth(authData.getUserName(), authData.getPassword());
+		}
+		catch (Exception e) {
+			userId = -1l;
+		}
 
-		Long userId = authService.auth(authData.getUserName(), authData.getPassword());
 		if (userId<=0)
-			return buildResponse(false, "Пользователь не зарегистрирован");
+			return buildResponse(false, "Пользователь с таким именем не зарегистрирован");
+
+		User user = userService.findById(userId);
+		if (!authData.getPassword().equals(user.getPassword()))
+			return buildResponse(false, "Имя пользователя или пароль указаны неверно");
 
 		return buildResponse(true, "success");
 	}
@@ -53,4 +63,7 @@ public class AuthResourceImpl {
 
 	@Inject
 	private AuthService authService;
+
+	@Inject
+	private UserService userService;
 }
