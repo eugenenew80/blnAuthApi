@@ -43,7 +43,7 @@ public class AuthResourceImpl {
 			return buildResponse(false, "Пользователь с таким именем не зарегистрирован");
 
 		User user = userService.findById(userId);
-		if (!authData.getPassword().equals(user.getPassword()))
+		if (!authData.getPassword().equals(user.getPass()))
 			return buildResponse(false, "Имя пользователя или пароль указаны неверно");
 
 		return buildResponse(true, "success");

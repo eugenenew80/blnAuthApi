@@ -17,7 +17,7 @@ public class User implements HasId, HasName{
 	private String name;
 
 	@NotNull @Size(max=30)
-	private String password;
+	private String pass;
 
 	@NotNull @Size(max=100)
 	private String description;
