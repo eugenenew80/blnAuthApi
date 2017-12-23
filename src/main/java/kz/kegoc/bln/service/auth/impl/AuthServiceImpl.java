@@ -2,18 +2,18 @@ package kz.kegoc.bln.service.auth.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.naming.NamingException;
-
 import kz.kegoc.bln.entity.adm.User;
 import kz.kegoc.bln.service.adm.UserService;
-import kz.kegoc.bln.service.auth.ActiveDirectory;
 import kz.kegoc.bln.service.auth.AuthService;
 import org.apache.commons.codec.binary.Base64;
-import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 @Stateless
 public class AuthServiceImpl implements AuthService {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
 	public Long auth(String userName, String password) {
@@ -44,12 +44,16 @@ public class AuthServiceImpl implements AuthService {
 			return 0l;
 
 		String hash = Base64.encodeBase64String((userName + ":" + password).getBytes());
-		sessions.put(hash, user,30, TimeUnit.MINUTES);
+		redissonClient.getBucket(hash).set(user, 30, TimeUnit.MINUTES);
+
+		logger.info(userName + ": session created");
+
 		return user.getId();
 	}
 
+
 	@Inject
-	private RMapCache<String, User> sessions;
+	private RedissonClient redissonClient;
 
 	@Inject
 	private UserService userService;
